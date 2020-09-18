@@ -1,0 +1,15 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: eureka
+#  security:
+#    user:
+#      name: root # 开启Eureka认证登录，需要引入spring-boot-starter-security
+#      password: root
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+    register-with-eureka: false
+    fetch-registry: false

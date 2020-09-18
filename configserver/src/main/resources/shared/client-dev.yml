@@ -1,0 +1,17 @@
+server:
+  port: 8080
+feign:
+  hystrix:
+    enabled: true
+
+ribbon:
+  ReadTimeout: 3000
+  ConnectTimeout: 3000
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
