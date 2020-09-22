@@ -1,0 +1,21 @@
+server:
+  port: 8060
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          routes:
+            - id: user_routh
+              uri: lb://client
+              predicates:
+                - Path=/user/**,/order/**
+          enabled: true
+          lower-case-service-id: true
+          filters:
+            - StripPrefix=0
+logging:
+  level:
+    org.springframework.cloud.gateway: debug

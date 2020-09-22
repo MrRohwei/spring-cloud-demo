@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient("order")
 public interface OrderFeignClient {
 
-    @GetMapping("/index")
+    @GetMapping("/order/index")
     public String index();
 }

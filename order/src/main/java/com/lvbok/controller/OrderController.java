@@ -10,7 +10,7 @@ public class OrderController {
     @Value("${server.port}")
     private int port;
 
-    @GetMapping("/index")
+    @GetMapping("/order/index")
     public String index() {
         return "order的端口：" + port;
     }
