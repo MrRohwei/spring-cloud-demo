@@ -34,34 +34,35 @@
         }
     </style>
 
-<!--    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>-->
 </head>
 <body id="body">
 <div>
-<!--    <div id="message">-->
-
-<!--    </div>-->
     <textarea id="message" cols="60" rows="30"></textarea>
     <div>
         用户名：<input id="userNameInput" type="text" placeholder="输入你的名称">
         <button type="button" onclick="joinRoom()">加入群聊</button>
         <br />
-        <input type="text" onkeydown="keyEnter()" id="text" placeholder="请输入内容">
+        发送给：<input id="toUserName" type="text" placeholder="输入对方的频道号">
+        <br />
+        内容：<input type="text" onkeydown="keyEnter()" id="text" placeholder="请输入内容">
         <button id="send" onclick="sendMessage()">发送消息</button>
     </div>
 </div>
 
 <script type="text/javascript">
     var ws = null;
-    var url = "ws://" + window.location.host + "/myws/";
+    var url = "ws://" + window.location.host + "/mywsV3/";
 
     function joinRoom() {
-        debugger;
         if (ws) {
             alert("你已经加入了，请勿重复加入！");
             return;
         }
         var userName = document.getElementById("userNameInput").value;
+        if (userName === '') {
+            alert("名称不能为空")
+            return;
+        }
         ws = new WebSocket(url + userName);
 
         ws.onopen = function () {
@@ -87,7 +88,15 @@
             alert("你已掉线，请重新连接");
             return;
         }
-        ws.send(document.getElementById("text").value);
+        var content = document.getElementById("text").value;
+        var toUser = document.getElementById("toUserName").value;
+        var message = {message: content, toUser: toUser};
+        if (toUser == '') {
+            message.type = 0;// 群聊
+        } else {
+            message.type = 1;// 单聊
+        }
+        ws.send(JSON.stringify(message));
         document.getElementById("text").value = '';
     }
 

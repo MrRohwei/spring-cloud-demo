@@ -9,26 +9,28 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import static com.lvbok.websocket.controller.LoginController.sessionMap;
 
 @Log4j2
 @Component
-@ServerEndpoint(value = "/myWebSocket/{fromUser}/{toUser}")
+@ServerEndpoint(value = "/myWebSocket/{userName}")
 public class MyWebSocket {
 
+    private String userName;
 //    private static Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session session
-            , @PathParam("fromUser") String fromUser) {
-        sessionMap.put(fromUser, session);
-        log.info("{}上线了\n当前在线人数：{}", fromUser, sessionMap.size());
+            , @PathParam("userName") String userName) {
+        sessionMap.put(userName, session);
+        log.info("{}上线了\n当前在线人数：{}", userName, sessionMap.size());
     }
 
     @OnClose
-    public void onClose(Session session, @PathParam("userName") String userName) {
+    public void onClose(Session session) {
         log.info("{}下线了！！！", userName);
         sessionMap.remove(userName);
     }
@@ -40,22 +42,20 @@ public class MyWebSocket {
 
 
     @OnMessage
-    public void onMessage(String message, Session session
-            , @PathParam("fromUser") String fromUser
-            , @PathParam("toUser") String toUser) throws IOException, EncodeException {
-        System.out.println(fromUser + "发送消息给: " + message);
+    public void onMessage(String message) throws IOException, EncodeException {
+//        System.out.println(userName + "发送消息给: " + message);
         Iterator<Map.Entry<String, Session>> iterator = sessionMap.entrySet().iterator();
-//        while (iterator.hasNext()) {
-//            Map.Entry<String, Session> next = iterator.next();
-//            Session value = next.getValue();
-//            Map<String, String> messageMap = new HashMap<>();
-//            value.getBasicRemote().sendText(fromUser + "说：" + message);
-//        }
+        while (iterator.hasNext()) {
+            Map.Entry<String, Session> next = iterator.next();
+            Session value = next.getValue();
+            Map<String, String> messageMap = new HashMap<>();
+            value.getBasicRemote().sendText(userName + "说：" + message);
+        }
 //        if (!sessionMap.containsKey(toUser)) {
 //            return CommonResponse.fail(111111, String.format("用户%s不存在", toUserName));
 //        }
-        CommonResponse commonResponse = sendTo(fromUser, toUser, message);
-        sessionMap.get(toUser).getBasicRemote().sendText(JSONObject.toJSONString(commonResponse));
+//        CommonResponse commonResponse = sendTo(userName, toUser, message);
+//        sessionMap.get(toUser).getBasicRemote().sendText(JSONObject.toJSONString(commonResponse));
     }
 
     private CommonResponse sendTo(String fromUser, String toUser, String message) {

@@ -2,7 +2,7 @@ package com.lvbok.websocket.controller;
 
 import com.lvbok.common.CommonResponse;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,7 +27,7 @@ public class LoginController {
     @RequestMapping("/login")
     public ModelAndView login(String userName) {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("index");
+        mv.setViewName("indexV1");
         mv.addObject("userName", userName);
         return mv;
     }
@@ -43,5 +43,13 @@ public class LoginController {
         }
         response.setData(allUserList);
         return response;
+    }
+
+    public static void main(String[] args) {
+        String checkType = "man";
+        String[] split = StringUtils.split(checkType, ",");
+        for (String s : split) {
+            System.out.println(s);
+        }
     }
 }
