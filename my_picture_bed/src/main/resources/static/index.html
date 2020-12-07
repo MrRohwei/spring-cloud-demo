@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传文件</title>
+</head>
+<body>
+<form action="/qiniu/upload" method="post" enctype="multipart/form-data">
+    选择文件：<input type="file" name="file" id="file" value="选择文件">
+    <input type="button" value="上传" id="uploadImg">
+</form>
+图片链接：<a id="imgUrl" href=""></a>
+</body>
+</html>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript">
+    $("#uploadImg").click(function () {
+        var formData = new FormData();
+        formData.append("file", $("#file")[0].files[0]);
+        $.ajax({
+            url: "/qiniu/upload",
+            // dataType: "json",
+            type: "POST",
+            // async: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                console.log(data);
+                $("#imgUrl").attr("href", data);
+                $("#imgUrl").text(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                // 状态码
+                console.log(XMLHttpRequest.status);
+                // 状态
+                console.log(XMLHttpRequest.readyState);
+                // 错误信息
+                console.log(textStatus);
+
+            }
+        });
+    });
+
+</script>

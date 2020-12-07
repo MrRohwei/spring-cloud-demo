@@ -1,0 +1,10 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: my_picture_bed
+qiniu:
+  accessKey: WO2HbKXUa7RCV_RWf22Qyi9pkllTeEHuKysz2X1k
+  secretKey: UAEtLyPuTlXgj61ykWox4pycrO5EaLwiztqtyXKk
+  bucket: mrrohwei
+  domain: http://images.lvbok.com/
