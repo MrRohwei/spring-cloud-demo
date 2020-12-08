@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试WebSocket</title>
+    <style>
+        #message {
+            height: 520px;
+            border-bottom: 1px solid gray;
+            padding: 20px 30px;
+            overflow: auto;
+        }
+
+        #container {
+            margin: 0 auto;
+            width: 720px;
+            border: 1px solid gray
+        }
+
+        input {
+            width: 300px;
+            height: 36px;
+            border: 1px solid gray;
+            background: none;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: yellow;
+        }
+
+        button {
+            height: 36px;
+        }
+        .user-list-div {
+            position: absolute;
+            left: 545px;
+            top: 0px;
+        }
+        .user-list-div li {
+            list-style-type: none;
+        }
+        .user-list-div li img{
+            height: 20px;
+        }
+    </style>
+
+</head>
+<body id="body">
+<div>
+    <textarea id="message" cols="60" rows="30"></textarea>
+    <div class="user-list-div">
+        <p>当前在线人数：<span id="count">0</span></p>
+        <ul id="userList"></ul>
+    </div>
+    <div>
+        用户名：<input id="userNameInput" type="text" placeholder="输入你的名称">
+        <button type="button" onclick="joinRoom()">加入群聊</button>
+        <br />
+        发送给：<input id="toUserName" type="text" placeholder="输入对方的频道号">
+        <br />
+        内容：<input type="text" onkeydown="keyEnter()" id="text" placeholder="请输入内容">
+        <button id="send" onclick="sendMessage()">发送消息</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var ws = null;
+    var url = "ws://" + window.location.host + "/mywsV4/";
+
+    function joinRoom() {
+        if (ws) {
+            alert("你已经加入了，请勿重复加入！");
+            return;
+        }
+        var userName = document.getElementById("userNameInput").value;
+        if (userName === '') {
+            alert("名称不能为空")
+            return;
+        }
+        ws = new WebSocket(url + userName);
+
+        ws.onopen = function () {
+            console.log("与服务器成功建立连接")
+        };
+        //服务端推送消息触发
+        ws.onmessage = function (ev) {
+            getMsg(ev.data);
+        };
+
+        //发生错误触发
+        ws.onerror = function () {
+            console.log("连接错误")
+        };
+        //正常关闭触发
+        ws.onclose = function () {
+            console.log("连接关闭");
+        };
+    }
+
+    function sendMessage() {
+        if (!ws) {
+            alert("你已掉线，请重新连接");
+            return;
+        }
+        var content = document.getElementById("text").value;
+        var toUser = document.getElementById("toUserName").value;
+        var message = {message: content, toUser: toUser};
+        if (toUser == '') {
+            message.type = 0;// 群聊
+        } else {
+            message.type = 1;// 单聊
+        }
+        ws.send(JSON.stringify(message));
+        document.getElementById("text").value = '';
+    }
+
+    // 按回车发送消息
+    function keyEnter() {
+        if (event.keyCode == 13) {
+            sendMessage();
+        }
+    }
+
+    function getMsg(data) {
+        // json数据表明是用户列表
+        if (isJSON(data)) {
+            var parse = JSON.parse(data);
+            console.log(parse);
+            var html = getUserList(parse);
+            document.getElementById("userList").innerHTML = html;// 用户列表
+            document.getElementById("count").innerText = parse[0].count;// 在线人数
+        } else {
+            document.getElementById("message").append(data + "\r\n");
+        }
+        // console.log(data);
+    }
+
+    function getUserList(data) {
+        var result = "";
+        for (var i = 0; i < data.length; i++) {
+            var html = "<li><img src='"+data[i].img+"' >"+data[i].username+"</li>";
+            result += html;
+        }
+        return result;
+    }
+
+    function isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                JSON.parse(str);
+                return true;
+            } catch(e) {
+                console.log(e);
+                return false;
+            }
+        }
+        console.log('It is not a string!')
+    }
+</script>
+</body>
+</html>
