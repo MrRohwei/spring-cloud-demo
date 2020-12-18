@@ -106,15 +106,13 @@ public class MyWebSocketV4 implements Serializable {
                 Session toUserSession = sessionMap.get(dto.getToUser());
                 log.info("频道[{}]私聊[{}]", fromUserSession.getId(), toUserSession.getId());
                 if (toUserSession.isOpen()) {
-//                    fromUserSession.getAsyncRemote().sendText(String.format("%s：%s", username, dto.getMessage()));
-//                    toUserSession.getAsyncRemote().sendText(String.format("%s：%s", username, dto.getMessage()));
-                    sendTextMsgTo(String.format("%s：%s", username, dto.getMessage()), fromUserSession);
-                    sendTextMsgTo(String.format("%s：%s", username, dto.getMessage()), toUserSession);
+                    sendTextMsgTo(String.format("%s", dto.getMessage()), fromUserSession);
+                    sendTextMsgTo(String.format("%s", dto.getMessage()), toUserSession);
                 } else {
                     fromUserSession.getAsyncRemote().sendText("对方不在线或用户不存在");
                 }
             } else {
-                sendTextMsgLoop(String.format("%s：%s", username, dto.getMessage()));
+                sendTextMsgLoop(String.format("%s", dto.getMessage()));
             }
         } catch (JsonProcessingException e) {
             log.error("转换json失败：{}", message);

@@ -1,0 +1,439 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>vue</title>
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body, ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            color: #4d4d4d;
+            font: 14px/1.4em 'Helvetica Neue', Helvetica, 'Microsoft Yahei', Arial, sans-serif;
+            background: #f5f5f5 url('dist/images/bg.jpg') no-repeat center;
+            background-size: cover;
+            font-smoothing: antialiased;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        #chat {
+            margin: 20px auto;
+            width: 800px;
+            height: 600px;
+        }
+
+        #chat {
+            overflow: hidden;
+            border-radius: 3px
+        }
+
+        #chat .main, #chat .sidebar {
+            height: 100%
+        }
+
+        #chat .sidebar {
+            float: left;
+            width: 200px;
+            color: #f4f4f4;
+            background-color: #2e3238
+        }
+
+        #chat .main {
+            position: relative;
+            overflow: hidden;
+            background-color: #eee
+        }
+
+        #chat .m-text {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            left: 0
+        }
+
+        #chat .m-message {
+            height: calc(100% - 10pc)
+        }
+
+        .m-card {
+            padding: 9pt;
+            border-bottom: 1px solid #24272c
+        }
+
+        .m-card footer {
+            margin-top: 10px
+        }
+
+        .m-card .avatar, .m-card .name {
+            vertical-align: middle
+        }
+
+        .m-card .avatar {
+            border-radius: 2px
+        }
+
+        .m-card .name {
+            display: inline-block;
+            margin: 0 0 0 15px;
+            font-size: 1pc
+        }
+
+        .m-card .search {
+            padding: 0 10px;
+            width: 100%;
+            font-size: 9pt;
+            color: #fff;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            outline: 0;
+            background-color: #26292e
+        }
+
+        .m-list li {
+            padding: 9pt 15px;
+            border-bottom: 1px solid #292c33;
+            cursor: pointer;
+            -webkit-transition: background-color .1s;
+            transition: background-color .1s
+        }
+
+        .m-list li:hover {
+            background-color: hsla(0, 0%, 100%, .03)
+        }
+
+        .m-list li.active {
+            background-color: hsla(0, 0%, 100%, .1)
+        }
+
+        .m-list .avatar, .m-list .name {
+            vertical-align: middle
+        }
+
+        .m-list .avatar {
+            border-radius: 2px
+        }
+
+        .m-list .name {
+            display: inline-block;
+            margin: 0 0 0 15px
+        }
+
+        .m-text {
+            height: 10pc;
+            border-top: 1px solid #ddd
+        }
+
+        .m-text textarea {
+            padding: 10px;
+            height: 68%;
+            width: 100%;
+            border: none;
+            outline: 0;
+            font-family: Micrsofot Yahei;
+            resize: none
+        }
+
+        .m-message {
+            padding: 10px 15px;
+            overflow-y: scroll
+        }
+
+        .m-message li {
+            margin-bottom: 15px
+        }
+
+        .m-message .time {
+            margin: 7px 0;
+            text-align: center
+        }
+
+        .m-message .time > span {
+            display: inline-block;
+            padding: 0 18px;
+            font-size: 9pt;
+            color: #fff;
+            border-radius: 2px;
+            background-color: #dcdcdc
+        }
+
+        .m-message .avatar {
+            float: left;
+            margin: 0 10px 0 0;
+            border-radius: 3px
+        }
+
+        .m-message .text {
+            display: inline-block;
+            position: relative;
+            padding: 0 10px;
+            max-width: calc(100% - 40px);
+            min-height: 30px;
+            line-height: 2.5;
+            font-size: 9pt;
+            text-align: left;
+            word-break: break-all;
+            background-color: #fafafa;
+            border-radius: 4px;
+        }
+
+        .m-message .text:before {
+            content: " ";
+            position: absolute;
+            top: 9px;
+            right: 100%;
+            border: 6px solid transparent;
+            border-right-color: #fafafa
+        }
+
+        .m-message .self {
+            text-align: right
+        }
+
+        .m-message .self .avatar {
+            float: right;
+            margin: 0 0 0 10px
+        }
+
+        .m-message .self .text {
+            background-color: #b2e281
+        }
+
+        .m-message .self .text:before {
+            right: inherit;
+            left: 100%;
+            border-right-color: transparent;
+            border-left-color: #b2e281
+        }
+
+        .m-message .avatar-m {
+            float: right;
+            border-radius: 3px
+        }
+
+        .m-message .text-m {
+            display: inline-block;
+            position: relative;
+            padding: 0 10px;
+            max-width: calc(100% - 40px);
+            min-height: 30px;
+            line-height: 2.5;
+            font-size: 9pt;
+            text-align: left;
+            word-break: break-all;
+            background-color: #95ec69;
+            border-radius: 4px;
+            float: right;
+            left: -10px;
+        }
+
+        .m-message .text-m:before {
+            content: " ";
+            position: absolute;
+            top: 9px;
+            left: 100%;
+            border: 6px solid transparent;
+            border-left-color: #95ec69
+        }
+        #sendBtn {
+            float: right;
+            width: 100px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="chat">
+    <div class="sidebar">
+        <div class="m-card">
+            <header>
+                <img class="avatar" width="40" height="40" alt="聊天室" src="dist/images/1.jpg">
+                <p class="name">在线人数(<span id="count">0</span>)</p>
+            </header>
+            <footer>
+                <input class="search" id="userNameInput" placeholder="输入用户名并点击加入群聊...">
+            </footer>
+        </div><!--v-component-->
+        <div class="m-list">
+            <ul id="userList"><!--v-for-start-->
+                <!--                <li class="active">-->
+                <!--                    <img class="avatar" width="30" height="30" alt="萌" src="dist/images/2.jpg">-->
+                <!--                    <p class="name">萌</p>-->
+                <!--                </li>-->
+                <!--                <li>-->
+                <!--                    <img class="avatar" width="30" height="30" alt="咘咘" src="dist/images/3.jpg">-->
+                <!--                    <p class="name">咘咘</p>-->
+                <!--                </li>&lt;!&ndash;v-for-end&ndash;&gt;-->
+            </ul>
+        </div><!--v-component-->
+    </div>
+    <div class="main">
+        <div class="m-message">
+            <ul id="content"><!--v-for-start-->
+                <!--<li>
+                    <p class="time"><span>11:11</span></p>
+                    <div class="main">
+                        <img class="avatar" width="30" height="30" src="dist/images/2.jpg">
+                        <div class="text">
+                            咘咘，你在干嘛呢12312331231231231111111111111111111111111111111111111111111111111111111111111111113123231231231
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <p class="time"><span>11:15</span></p>
+                    <div class="main">
+                        <img class="avatar" width="30" height="30" src="dist/images/2.jpg">
+                        <div class="text">？？？</div>
+                    </div>
+                </li>&lt;!&ndash;v-for-end&ndash;&gt;
+                <li>
+                    <p class="time"><span>11:16</span></p>
+                    <div class="main">
+                        <img class="avatar-m" width="30" height="30" src="dist/images/3.jpg">
+                        <div class="text-m">
+                            ？？1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111？
+                        </div>
+                    </div>
+                </li>-->
+            </ul>
+        </div><!--v-component-->
+        <div class="m-text">
+            <div><input id="toUserName" type="text" placeholder="发送给谁..."></div>
+            <textarea id="input_content" onkeydown="keyEnter()"></textarea>
+            <button id="sendBtn" onclick="sendMessage()">发送</button>
+            <button onclick="joinRoom()" style="float: right; margin-right: 10px;">加入群聊</button>
+        </div><!--v-component-->
+    </div>
+</div>
+<body>
+<script type="text/javascript">
+    var ws = null;
+    var url = "ws://" + window.location.host + "/mywsV4/";
+
+    function joinRoom() {
+        if (ws) {
+            alert("你已经加入了，请勿重复加入！");
+            return;
+        }
+        var userName = document.getElementById("userNameInput").value;
+        if (userName === '') {
+            alert("名称不能为空")
+            return;
+        }
+        ws = new WebSocket(url + userName);
+
+        ws.onopen = function () {
+            console.log("与服务器成功建立连接")
+        };
+        //服务端推送消息触发
+        ws.onmessage = function (ev) {
+            getMsg(ev.data);
+        };
+
+        //发生错误触发
+        ws.onerror = function () {
+            console.log("连接错误")
+        };
+        //正常关闭触发
+        ws.onclose = function () {
+            console.log("连接关闭");
+        };
+    }
+
+    function sendMessage() {
+        if (!ws) {
+            alert("你已掉线，请重新连接");
+            return;
+        }
+        var content = document.getElementById("input_content").value;
+        var toUser = document.getElementById("toUserName").value;
+        var message = {message: content, toUser: toUser};
+        if (toUser == '') {
+            message.type = 0;// 群聊
+        } else {
+            message.type = 1;// 单聊
+        }
+        ws.send(JSON.stringify(message));
+        var html = "<li>\n" +
+            "                    <p class=\"time\"><span>11:16</span></p>\n" +
+            "                    <div class=\"main\">\n" +
+            "                        <img class=\"avatar-m\" width=\"30\" height=\"30\" src=\"dist/images/3.jpg\">\n" +
+            "                        <div class=\"text-m\">\n" +
+            content +
+            "                        </div>\n" +
+            "                    </div>\n" +
+            "                </li>";
+        document.getElementById("content").innerHTML += html;
+    }
+
+    // 按回车发送消息
+    function keyEnter() {
+        if (event.keyCode == 13) {
+            sendMessage();
+        }
+    }
+
+    function getMsg(data) {
+        // json数据表明是用户列表
+        debugger;
+        if (isJSON(data)) {
+            var parse = JSON.parse(data);
+            console.log(parse);
+            var html = getUserList(parse);
+            document.getElementById("userList").innerHTML = html;// 用户列表
+            document.getElementById("count").innerText = parse[0].count;// 在线人数
+        } else {
+            debugger;
+            var html = "<li>\n" +
+                "                    <p class=\"time\"><span>11:11</span></p>\n" +
+                "                    <div class=\"main\">\n" +
+                "                        <img class=\"avatar\" width=\"30\" height=\"30\" src=\"dist/images/2.jpg\">\n" +
+                "                        <div class=\"text\">\n" +
+                data +
+                "                        </div>\n" +
+                "                    </div>\n" +
+                "                </li>";
+            document.getElementById("content").innerHTML += html;
+        }
+    }
+
+    function getUserList(data) {
+        var result = "";
+        for (var i = 0; i < data.length; i++) {
+            var html = "<li class=\"active\">\n" +
+                "\t\t\t\t\t\t<img class=\"avatar\" width=\"30\" height=\"30\" alt=\"萌\" src=\"dist/images/2.jpg\">\n" +
+                "\t\t\t\t\t\t<p class=\"name\">" + data[i].username + "</p>\n" +
+                "\t\t\t\t\t</li>";
+            result += html;
+        }
+        return result;
+    }
+
+    function isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                JSON.parse(str);
+                return true;
+            } catch (e) {
+                console.log(e);
+                return false;
+            }
+        }
+        console.log('It is not a string!')
+    }
+</script>

@@ -26,9 +26,9 @@ public class UserController {
         return userFeignClient.findAllUser();
     }
 
-    @GetMapping("/findById/{id}")
+    @PostMapping("/findById/{id}")
     public CommonResponse<UserDto> findById(@PathVariable Integer id) {
-        log.info("client ============ findById");
+        log.info("client ============ findById:{}", id);
         CommonResponse<UserDto> byId = userFeignClient.findById(id);
         return byId;
     }

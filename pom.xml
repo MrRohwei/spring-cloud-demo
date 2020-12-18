@@ -26,6 +26,7 @@
         <module>gateway</module>
         <module>my_picture_bed</module>
         <module>springboot-es</module>
+        <module>demo</module>
     </modules>
 
     <!--子模块集成之后， 提供作用：锁定版本+子模块不用写groupId和version-->
